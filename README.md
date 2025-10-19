@@ -50,6 +50,9 @@ make seed-adoptions COUNT=12 MODE=mix
 make lint
 make check
 make superuser
+
+# Demo completa (setup + migrate + seeds + run)
+make demo COUNT=10 IMAGES=generate ADP_COUNT=15 MODE=mix CREATE_USERS=5 HOST=0.0.0.0 PORT=8000
 ```
 
 Acesse:

@@ -13,9 +13,11 @@ PORT ?= 8000
 COUNT ?= 10
 IMAGES ?= none        # none | generate | download
 MODE ?= mix           # mix | pending | approved | rejected
+ADP_COUNT ?= 15       # adoptions count for demo
+CREATE_USERS ?= 5     # demo users to create in seed_adoptions
 USER ?= admin         # used by backfill-created-by
 
-.PHONY: help setup check migrate superuser run test cov lint clean seed-animals seed-adoptions backfill-created-by shell
+.PHONY: help setup check migrate superuser run test cov lint clean seed-animals seed-adoptions backfill-created-by shell demo
 
 help:
 	@echo "Targets disponíveis:"
@@ -32,6 +34,7 @@ help:
 	@echo "  backfill-created-by   - Atribui created_by a animais sem dono (USER=$(USER))"
 	@echo "  clean                 - Limpa artefatos de build/test"
 	@echo "  shell                 - Abre manage.py shell"
+	@echo "  demo                  - Setup completo + seeds + sobe o servidor"
 
 setup:
 	$(PY) -m pip install --upgrade pip
@@ -80,3 +83,15 @@ clean:
 
 shell:
 	$(PY) manage.py shell
+
+demo:
+	@echo "==> Instalando dependências"
+	$(MAKE) setup
+	@echo "==> Migrando banco"
+	$(MAKE) migrate
+	@echo "==> Populando animais (COUNT=$(COUNT), IMAGES=$(IMAGES))"
+	$(PY) manage.py seed_animals --count $(COUNT) --with-images $(IMAGES) --force
+	@echo "==> Populando adoções (COUNT=$(ADP_COUNT), MODE=$(MODE), CREATE_USERS=$(CREATE_USERS))"
+	$(PY) manage.py seed_adoptions --count $(ADP_COUNT) --mode $(MODE) --create-users $(CREATE_USERS) --force
+	@echo "==> Subindo servidor em $(HOST):$(PORT)"
+	$(MAKE) run
