@@ -7,7 +7,8 @@
 #   make seed-adoptions COUNT=12 MODE=mix
 
 SHELL := /bin/bash
-PY ?= python
+# Detecta automaticamente o binário do Python (prioriza .venv, depois python, depois python3)
+PY ?= $(shell if [ -x .venv/bin/python ]; then echo .venv/bin/python; elif command -v python >/dev/null 2>&1; then echo python; elif command -v python3 >/dev/null 2>&1; then echo python3; else echo python; fi)
 DC ?= docker compose
 HOST ?= 0.0.0.0
 PORT ?= 8000
@@ -77,15 +78,15 @@ test:
 	$(PY) manage.py test --verbosity 2
 
 cov:
-	@which coverage >/dev/null 2>&1 || { echo "Instalando coverage..."; $(PY) -m pip install coverage; }
-	coverage run manage.py test --verbosity 2
-	coverage report -m
-	coverage html
+	@$(PY) -m pip show coverage >/dev/null 2>&1 || { echo "Instalando coverage..."; $(PY) -m pip install coverage; }
+	$(PY) -m coverage run manage.py test --verbosity 2
+	$(PY) -m coverage report -m
+	$(PY) -m coverage html
 	@echo "Abra htmlcov/index.html para ver o relatório."
 
 lint:
-	@which flake8 >/dev/null 2>&1 || { echo "Instalando flake8..."; $(PY) -m pip install flake8; }
-	flake8 . --max-line-length=100 --extend-exclude .venv,**/migrations/** || true
+	@$(PY) -m pip show flake8 >/dev/null 2>&1 || { echo "Instalando flake8..."; $(PY) -m pip install flake8; }
+	$(PY) -m flake8 . --max-line-length=100 --extend-exclude .venv,**/migrations/** || true
 
 seed-animals:
 	$(PY) manage.py seed_animals --count $(COUNT) --with-images $(IMAGES) --force
@@ -141,7 +142,7 @@ ci-local:
 	$(MAKE) lint
 	@echo "==> Tests with coverage (HTML + XML)"
 	$(MAKE) cov
-	coverage xml
+	$(PY) -m coverage xml
 	@echo "Relatórios gerados: .coverage, coverage.xml e htmlcov/index.html"
 
 docker-build:
