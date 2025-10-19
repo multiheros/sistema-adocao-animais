@@ -202,5 +202,19 @@ Como renderizar localmente (opcional):
 - Geração de imagens (Pillow)
 	- O seed usa fallback compatível com versões novas (`multiline_textbbox`).
 
+## Testes e Cobertura
+- Rodar testes localmente:
+	```bash
+	python manage.py test --verbosity 2
+	```
+- Cobertura local (opcional):
+	```bash
+	pip install coverage
+	coverage run manage.py test --verbosity 2
+	coverage report -m
+	coverage html  # gera htmlcov/index.html
+	```
+- Na CI, a cobertura é gerada automaticamente e o relatório HTML é publicado como artifact de build. Se você configurar um token `CODECOV_TOKEN` nos Secrets do repositório, os resultados também serão enviados ao Codecov.
+
 ## Licença
 Projeto acadêmico para fins educacionais.
