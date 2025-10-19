@@ -51,6 +51,9 @@ make lint
 make check
 make superuser
 
+# Criar/garantir um superusuário não interativo
+make admin ADMIN_USER=admin ADMIN_EMAIL=admin@example.com ADMIN_PASSWORD=admin123
+
 # Demo completa (setup + migrate + seeds + run)
 make demo COUNT=10 IMAGES=generate ADP_COUNT=15 MODE=mix CREATE_USERS=5 HOST=0.0.0.0 PORT=8000
 ```

@@ -16,8 +16,11 @@ MODE ?= mix           # mix | pending | approved | rejected
 ADP_COUNT ?= 15       # adoptions count for demo
 CREATE_USERS ?= 5     # demo users to create in seed_adoptions
 USER ?= admin         # used by backfill-created-by
+ADMIN_USER ?= admin
+ADMIN_EMAIL ?= admin@example.com
+ADMIN_PASSWORD ?= admin123
 
-.PHONY: help setup check migrate superuser run test cov lint clean seed-animals seed-adoptions backfill-created-by shell demo
+.PHONY: help setup check migrate superuser run test cov lint clean seed-animals seed-adoptions backfill-created-by shell demo admin
 
 help:
 	@echo "Targets disponíveis:"
@@ -35,6 +38,7 @@ help:
 	@echo "  clean                 - Limpa artefatos de build/test"
 	@echo "  shell                 - Abre manage.py shell"
 	@echo "  demo                  - Setup completo + seeds + sobe o servidor"
+	@echo "  admin                 - Cria/atualiza superusuário não interativo (ADMIN_USER=$(ADMIN_USER))"
 
 setup:
 	$(PY) -m pip install --upgrade pip
@@ -95,3 +99,7 @@ demo:
 	$(PY) manage.py seed_adoptions --count $(ADP_COUNT) --mode $(MODE) --create-users $(CREATE_USERS) --force
 	@echo "==> Subindo servidor em $(HOST):$(PORT)"
 	$(MAKE) run
+
+admin:
+	@echo "==> Garantindo superusuário: $(ADMIN_USER)"
+	$(PY) manage.py shell -c "from django.contrib.auth import get_user_model; User=get_user_model(); u, created = User.objects.get_or_create(username='$(ADMIN_USER)', defaults={'email':'$(ADMIN_EMAIL)'}); u.is_staff=True; u.is_superuser=True; u.email='$(ADMIN_EMAIL)'; u.set_password('$(ADMIN_PASSWORD)'); u.save(); print('Superuser ready:', u.username, 'created' if created else 'updated')"
