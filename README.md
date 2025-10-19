@@ -1,5 +1,7 @@
 # Sistema de Adoção de Animais
 
+![CI](https://github.com/multiheros/sistema-adocao-animais/actions/workflows/ci.yml/badge.svg)
+
 Aplicação Django para gerenciar um abrigo de animais: cadastro de animais, controle de adoções e autenticação de usuários. Interface moderna com Bootswatch (tema Lux) e Bootstrap Icons, além de componentes utilitários próprios (.btn-icon e .btn-cta).
 
 ## Stack
