@@ -23,7 +23,7 @@ ADMIN_PASSWORD ?= admin123
 SVC ?= web
 CMD ?= sh
 
-.PHONY: help setup check migrate superuser run test cov lint clean seed-animals seed-adoptions backfill-created-by shell demo admin demo-admin reset quick-demo ci-local docker-build docker-up docker-down docker-logs docker-exec
+.PHONY: help setup check migrate superuser run test cov lint clean seed-animals seed-adoptions backfill-created-by shell demo admin demo-admin reset quick-demo ci-local docker-build docker-up docker-down docker-logs docker-exec docker-migrate docker-admin docker-seed docker-demo
 
 help:
 	@echo "Targets disponíveis:"
@@ -51,6 +51,10 @@ help:
 	@echo "  docker-down           - Derruba os containers (docker compose down)"
 	@echo "  docker-logs           - Segue logs do serviço (SVC=$(SVC))"
 	@echo "  docker-exec           - Executa comando no container (SVC=$(SVC), CMD=$(CMD))"
+	@echo "  docker-migrate        - Executa migrations dentro do container"
+	@echo "  docker-admin          - Garante superusuário dentro do container (ADMIN_*)"
+	@echo "  docker-seed           - Roda seeds (animais + adoções) dentro do container"
+	@echo "  docker-demo           - Build + up + migrate + admin + seeds (fluxo completo em Docker)"
 
 setup:
 	$(PY) -m pip install --upgrade pip
@@ -154,3 +158,29 @@ docker-logs:
 
 docker-exec:
 	$(DC) exec -it $(SVC) $(CMD)
+
+docker-migrate:
+	$(DC) exec $(SVC) python manage.py migrate
+
+docker-admin:
+	@echo "==> Garantindo superusuário no container: $(ADMIN_USER)"
+	$(DC) exec $(SVC) python manage.py shell -c "from django.contrib.auth import get_user_model; User=get_user_model(); u, created = User.objects.get_or_create(username='$(ADMIN_USER)', defaults={'email':'$(ADMIN_EMAIL)'}); u.is_staff=True; u.is_superuser=True; u.email='$(ADMIN_EMAIL)'; u.set_password('$(ADMIN_PASSWORD)'); u.save(); print('Superuser ready:', u.username, 'created' if created else 'updated')"
+
+docker-seed:
+	@echo "==> Populando animais no container (COUNT=$(COUNT), IMAGES=$(IMAGES))"
+	$(DC) exec $(SVC) python manage.py seed_animals --count $(COUNT) --with-images $(IMAGES) --force
+	@echo "==> Populando adoções no container (COUNT=$(ADP_COUNT), MODE=$(MODE), CREATE_USERS=$(CREATE_USERS))"
+	$(DC) exec $(SVC) python manage.py seed_adoptions --count $(ADP_COUNT) --mode $(MODE) --create-users $(CREATE_USERS) --force
+
+docker-demo:
+	@echo "==> Build das imagens"
+	$(MAKE) docker-build
+	@echo "==> Subindo containers"
+	$(MAKE) docker-up
+	@echo "==> Aplicando migrations"
+	$(MAKE) docker-migrate
+	@echo "==> Garantindo admin no container"
+	$(MAKE) docker-admin
+	@echo "==> Rodando seeds no container"
+	$(MAKE) docker-seed
+	@echo "==> Pronto! Acesse: http://localhost:8000 (Admin: /admin)"
