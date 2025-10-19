@@ -282,5 +282,23 @@ URLs:
 - App: http://localhost:8000/
 - Admin: http://localhost:8000/admin/
 
+Atalhos com Make (Docker):
+```bash
+# Fazer build das imagens
+make docker-build
+
+# Subir em background
+make docker-up
+
+# Seguir logs do serviço principal (web)
+make docker-logs
+
+# Executar um comando no container (ex.: bash)
+make docker-exec CMD=bash
+
+# Derrubar containers
+make docker-down
+```
+
 ## Licença
 Projeto acadêmico para fins educacionais.

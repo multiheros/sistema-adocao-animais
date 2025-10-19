@@ -8,6 +8,7 @@
 
 SHELL := /bin/bash
 PY ?= python
+DC ?= docker compose
 HOST ?= 0.0.0.0
 PORT ?= 8000
 COUNT ?= 10
@@ -19,8 +20,10 @@ USER ?= admin         # used by backfill-created-by
 ADMIN_USER ?= admin
 ADMIN_EMAIL ?= admin@example.com
 ADMIN_PASSWORD ?= admin123
+SVC ?= web
+CMD ?= sh
 
-.PHONY: help setup check migrate superuser run test cov lint clean seed-animals seed-adoptions backfill-created-by shell demo admin demo-admin reset quick-demo ci-local
+.PHONY: help setup check migrate superuser run test cov lint clean seed-animals seed-adoptions backfill-created-by shell demo admin demo-admin reset quick-demo ci-local docker-build docker-up docker-down docker-logs docker-exec
 
 help:
 	@echo "Targets disponíveis:"
@@ -43,6 +46,11 @@ help:
 	@echo "  reset                 - APAGA db.sqlite3 e media/ e roda demo-admin do zero (cuidado!)"
 	@echo "  quick-demo            - Alias sem prompt (admin + demo) usando valores padrão"
 	@echo "  ci-local              - Simula pipeline CI localmente (checks, lint, tests+coverage XML/HTML)"
+	@echo "  docker-build          - Faz build das imagens (docker compose build)"
+	@echo "  docker-up             - Sobe os containers em background (docker compose up -d)"
+	@echo "  docker-down           - Derruba os containers (docker compose down)"
+	@echo "  docker-logs           - Segue logs do serviço (SVC=$(SVC))"
+	@echo "  docker-exec           - Executa comando no container (SVC=$(SVC), CMD=$(CMD))"
 
 setup:
 	$(PY) -m pip install --upgrade pip
@@ -131,3 +139,18 @@ ci-local:
 	$(MAKE) cov
 	coverage xml
 	@echo "Relatórios gerados: .coverage, coverage.xml e htmlcov/index.html"
+
+docker-build:
+	$(DC) build
+
+docker-up:
+	$(DC) up -d
+
+docker-down:
+	$(DC) down
+
+docker-logs:
+	$(DC) logs -f --tail=200 $(SVC)
+
+docker-exec:
+	$(DC) exec -it $(SVC) $(CMD)
