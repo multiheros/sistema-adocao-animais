@@ -372,3 +372,18 @@ Variáveis (com defaults):
 
 ## Licença
 Projeto acadêmico para fins educacionais.
+
+## Troubleshooting Docker
+- Porta 8000 já em uso
+	- Feche o processo que usa a porta ou suba em outra porta editando o compose temporariamente.
+	- Alternativa: mude a publicação no docker-compose.yml para "8080:8000" e acesse http://localhost:8080.
+- Mudanças não refletidas no container
+	- O projeto está em bind-mount (.:/app). Verifique se o compose está usando esse volume e se não há conflito com permissões.
+	- Se tiver build cache antigo, rode: `make docker-down && docker compose build --no-cache && make docker-up`.
+- Erros de migração
+	- Rode dentro do container: `make docker-migrate`.
+	- Se necessário, zere o banco e mídia (cuidado): `rm -f db.sqlite3 && rm -rf media` na máquina host (com containers parados) e suba novamente.
+- Containers zumbis/órfãos
+	- `make docker-down` e depois `docker compose ls` para verificar stacks. Use `docker ps -a` e `docker rm -f <id>` para limpar.
+- Volumes travados
+	- Para limpar volumes locais criados pelo compose (irá apagar uploads): `docker volume ls` e `docker volume rm <volume>` correspondente ao volume media.
