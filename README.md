@@ -31,6 +31,27 @@ python manage.py createsuperuser
 python manage.py runserver 0.0.0.0:8000
 ```
 
+Atalhos com Makefile (opcional):
+```bash
+# Instalar deps, migrar e subir
+make setup
+make migrate
+make run                # HOST=127.0.0.1 PORT=8000 para customizar
+
+# Testes e cobertura
+make test
+make cov
+
+# Seeds
+make seed-animals COUNT=10 IMAGES=generate
+make seed-adoptions COUNT=12 MODE=mix
+
+# Utilidades
+make lint
+make check
+make superuser
+```
+
 Acesse:
 - App: http://localhost:8000/
 - Admin: http://localhost:8000/admin/
