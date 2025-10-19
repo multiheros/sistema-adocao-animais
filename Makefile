@@ -42,7 +42,7 @@ help:
 	@echo "  demo-admin            - Cria admin e executa 'demo' (valores padrão personalizáveis)"
 	@echo "  reset                 - APAGA db.sqlite3 e media/ e roda demo-admin do zero (cuidado!)"
 	@echo "  quick-demo            - Alias sem prompt (admin + demo) usando valores padrão"
-    @echo "  ci-local              - Simula pipeline CI localmente (checks, lint, tests+coverage XML/HTML)"
+	@echo "  ci-local              - Simula pipeline CI localmente (checks, lint, tests+coverage XML/HTML)"
 
 setup:
 	$(PY) -m pip install --upgrade pip
