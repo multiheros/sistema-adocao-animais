@@ -10,7 +10,7 @@ Aplicação Django para gerenciar um abrigo de animais: cadastro de animais, con
 - SQLite (dev)
 - Bootstrap 5 (Bootswatch Lux) + Bootstrap Icons
 
-## Como rodar
+## Como rodar (local)
 ```bash
 # 1) Criar e ativar o ambiente
 python -m venv .venv
@@ -73,6 +73,10 @@ make ci-local
 Acesse:
 - App: http://localhost:8000/
 - Admin: http://localhost:8000/admin/
+
+Credenciais de exemplo (se usar targets demo/admin com defaults):
+- Usuário: admin
+- Senha: admin123
 
 ## Funcionalidades
 - Animais
@@ -256,7 +260,7 @@ Como renderizar localmente (opcional):
 - Na CI, a cobertura é gerada automaticamente e o relatório HTML é publicado como artifact de build. Se você configurar um token `CODECOV_TOKEN` nos Secrets do repositório, os resultados também serão enviados ao Codecov.
 
 ## Docker (opcional)
-Você pode rodar a aplicação em containers para uma demo rápida.
+Você pode rodar a aplicação em containers para uma demo rápida ou desenvolvimento isolado.
 
 Com Docker e docker-compose instalados:
 
@@ -282,7 +286,7 @@ URLs:
 - App: http://localhost:8000/
 - Admin: http://localhost:8000/admin/
 
-Atalhos com Make (Docker):
+### Docker com Make (atalhos)
 ```bash
 # Fazer build das imagens
 make docker-build
@@ -290,7 +294,16 @@ make docker-build
 # Subir em background
 make docker-up
 
-# Seguir logs do serviço principal (web)
+# Aplicar migrations dentro do container
+make docker-migrate
+
+# Garantir um superusuário (não interativo) no container
+make docker-admin ADMIN_USER=admin ADMIN_EMAIL=admin@example.com ADMIN_PASSWORD=admin123
+
+# Popular o banco dentro do container
+make docker-seed COUNT=10 IMAGES=generate ADP_COUNT=15 MODE=mix CREATE_USERS=5
+
+# Ver logs
 make docker-logs
 
 # Executar um comando no container (ex.: bash)
@@ -299,6 +312,55 @@ make docker-exec CMD=bash
 # Derrubar containers
 make docker-down
 ```
+
+### Demo completa em Docker (um comando)
+```bash
+make docker-demo \
+	ADMIN_USER=admin ADMIN_EMAIL=admin@example.com ADMIN_PASSWORD=admin123 \
+	COUNT=10 IMAGES=generate ADP_COUNT=15 MODE=mix CREATE_USERS=5
+```
+Isso fará: build → up → migrate → criar/atualizar admin → seeds (animais e adoções). Ao final, acesse http://localhost:8000.
+
+Variáveis úteis nesses alvos Docker:
+- ADMIN_USER, ADMIN_EMAIL, ADMIN_PASSWORD
+- COUNT, IMAGES (none|generate|download)
+- ADP_COUNT, MODE (mix|pending|approved|rejected), CREATE_USERS
+- SVC (serviço do compose; padrão: web), CMD (comando para docker-exec; padrão: sh)
+
+Observação: o docker-compose monta o volume de `media/` para persistir uploads localmente durante os testes.
+
+## Referência completa do Makefile
+
+Alvos principais:
+- setup: instala dependências (requirements.txt)
+- check: validações do Django (manage.py check)
+- migrate: makemigrations + migrate
+- run: servidor de dev (HOST, PORT)
+- superuser: cria superusuário interativo
+- test: testes (verbosity 2)
+- cov: coverage (CLI), gera htmlcov/
+- lint: flake8 (não falha localmente)
+- seed-animals: popula animais (COUNT, IMAGES)
+- seed-adoptions: popula adoções (COUNT, MODE)
+- backfill-created-by: preenche created_by em animais sem dono (USER)
+- clean: limpa artefatos (.coverage, coverage.xml, htmlcov, __pycache__)
+- shell: abre shell do Django
+- demo: setup + migrate + seeds + run
+- admin: garante superusuário não interativo
+- demo-admin: admin + demo
+- reset: zera db.sqlite3 e media/ e roda demo-admin
+- quick-demo: atalho para demo-admin
+- ci-local: checks + lint + testes com coverage (HTML e XML)
+
+Alvos Docker:
+- docker-build, docker-up, docker-down, docker-logs, docker-exec
+- docker-migrate, docker-admin, docker-seed, docker-demo
+
+Variáveis (com defaults):
+- PY=python, HOST=0.0.0.0, PORT=8000
+- COUNT=10, IMAGES=none, MODE=mix, ADP_COUNT=15, CREATE_USERS=5
+- USER=admin, ADMIN_USER=admin, ADMIN_EMAIL=admin@example.com, ADMIN_PASSWORD=admin123
+- DC="docker compose", SVC=web, CMD=sh
 
 ## Licença
 Projeto acadêmico para fins educacionais.
