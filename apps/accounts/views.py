@@ -5,6 +5,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from .forms import UserRegistrationForm, UserLoginForm
 
+
 def login_view(request):
     form = UserLoginForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():

@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 
 
+
 class Animal(models.Model):
     SPECIES_CHOICES = [
         ('dog', 'Cachorro'),

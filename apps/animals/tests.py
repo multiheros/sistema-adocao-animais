@@ -5,7 +5,11 @@ class AnimalModelTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        Animal.objects.create(name="Buddy", species="Dog", age=3, description="Friendly dog looking for a home.")
+        # species must match choices: dog/cat/bird/reptile/other
+        Animal.objects.create(
+            name="Buddy", species="dog", age=3,
+            description="Friendly dog looking for a home."
+        )
 
     def test_animal_name(self):
         animal = Animal.objects.get(id=1)
@@ -13,7 +17,7 @@ class AnimalModelTest(TestCase):
 
     def test_animal_species(self):
         animal = Animal.objects.get(id=1)
-        self.assertEqual(animal.species, "Dog")
+        self.assertEqual(animal.species, "dog")
 
     def test_animal_age(self):
         animal = Animal.objects.get(id=1)

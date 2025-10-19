@@ -3,6 +3,8 @@ from django.conf import settings
 from apps.animals.models import Animal
 from django.core.exceptions import ValidationError
 
+ 
+
 class Adoption(models.Model):
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE, related_name='adoptions')
     adopter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='adoptions')
@@ -15,7 +17,11 @@ class Adoption(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['animal'], condition=models.Q(status='approved'), name='unique_approved_adoption_per_animal')
+            models.UniqueConstraint(
+                fields=['animal'],
+                condition=models.Q(status='approved'),
+                name='unique_approved_adoption_per_animal',
+            )
         ]
 
     def __str__(self):
@@ -40,6 +46,9 @@ class Adoption(models.Model):
             animal.save(update_fields=['adopted'])
         elif self.status != 'approved':
             # Se nenhuma adoção permanece aprovada, desmarca adotado
-            if not Adoption.objects.filter(animal=animal, status='approved').exists() and animal.adopted:
+            if (
+                not Adoption.objects.filter(animal=animal, status='approved').exists()
+                and animal.adopted
+            ):
                 animal.adopted = False
                 animal.save(update_fields=['adopted'])

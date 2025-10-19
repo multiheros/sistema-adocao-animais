@@ -6,8 +6,8 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DJANGO_DEBUG: "1"
-      DJANGO_ALLOWED_HOSTS: "*"
+      DEBUG: "True"
+      ALLOWED_HOSTS: "*"
     volumes:
       - .:/app
       - media:/app/media
