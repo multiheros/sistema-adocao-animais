@@ -337,6 +337,32 @@ Variáveis úteis nesses alvos Docker:
 
 Observação: o docker-compose monta o volume de `media/` para persistir uploads localmente durante os testes.
 
+### Instalação rápida do Docker no Linux (referência)
+- Guia oficial Docker Engine: https://docs.docker.com/engine/install/
+- Compose (plugin): https://docs.docker.com/compose/install/linux/
+
+Passos típicos (Ubuntu/Debian):
+```bash
+# 1) Instale Docker Engine
+# (siga o guia oficial para configurar o repositório e instalar docker-ce)
+
+# 2) Habilite uso sem sudo (opcional)
+sudo usermod -aG docker "$USER"
+newgrp docker
+
+# 3) Verifique
+docker --version
+docker compose version
+
+# 4) Volte aqui e rode a demo
+make docker-demo
+```
+
+Atalho de ajuda:
+```bash
+make docker-install  # mostra este guia de referência
+```
+
 ## Referência completa do Makefile
 
 Alvos principais:

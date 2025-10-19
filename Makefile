@@ -9,7 +9,8 @@
 SHELL := /bin/bash
 # Detecta automaticamente o binário do Python (prioriza .venv, depois python, depois python3)
 PY ?= $(shell if [ -x .venv/bin/python ]; then echo .venv/bin/python; elif command -v python >/dev/null 2>&1; then echo python; elif command -v python3 >/dev/null 2>&1; then echo python3; else echo python; fi)
-DC ?= docker compose
+# Detecta compose: usa "docker compose" (plugin) ou fallback para "docker-compose" (legacy)
+DC ?= $(shell if command -v docker >/dev/null 2>&1; then echo "docker compose"; elif command -v docker-compose >/dev/null 2>&1; then echo docker-compose; else echo "docker compose"; fi)
 HOST ?= 0.0.0.0
 PORT ?= 8000
 COUNT ?= 10
@@ -24,7 +25,7 @@ ADMIN_PASSWORD ?= admin123
 SVC ?= web
 CMD ?= sh
 
-.PHONY: help setup check migrate superuser run test cov lint clean seed-animals seed-adoptions backfill-created-by shell demo admin demo-admin reset quick-demo ci-local docker-build docker-up docker-down docker-logs docker-exec docker-migrate docker-admin docker-seed docker-demo
+.PHONY: help setup check migrate superuser run test cov lint clean seed-animals seed-adoptions backfill-created-by shell demo admin demo-admin reset quick-demo ci-local docker-build docker-up docker-down docker-logs docker-exec docker-migrate docker-admin docker-seed docker-demo docker-check docker-install
 
 help:
 	@echo "Targets disponíveis:"
@@ -56,6 +57,8 @@ help:
 	@echo "  docker-admin          - Garante superusuário dentro do container (ADMIN_*)"
 	@echo "  docker-seed           - Roda seeds (animais + adoções) dentro do container"
 	@echo "  docker-demo           - Build + up + migrate + admin + seeds (fluxo completo em Docker)"
+	@echo "  docker-check          - Verifica se Docker/Compose estão disponíveis e como instalar"
+	@echo "  docker-install        - Mostra guia de instalação do Docker/Compose no Linux (referência)"
 
 setup:
 	$(PY) -m pip install --upgrade pip
@@ -159,6 +162,20 @@ docker-logs:
 
 docker-exec:
 	$(DC) exec -it $(SVC) $(CMD)
+
+docker-check:
+	@echo "Verificando Docker e Compose..."
+	@{ command -v docker >/dev/null 2>&1 && echo "✔ docker encontrado: $$(docker --version)" || echo "✖ docker não encontrado"; } ; \
+	 { command -v docker-compose >/dev/null 2>&1 && echo "✔ docker-compose encontrado: $$(docker-compose --version)" || echo "(info) docker-compose legacy ausente (ok se tiver docker compose)"; } ; \
+	 { docker compose version >/dev/null 2>&1 && echo "✔ plugin docker compose disponível" || echo "✖ plugin docker compose indisponível"; } ; \
+	 echo "Se faltar Docker, veja README > Docker (opcional) para instruções de instalação.";
+
+docker-install:
+	@echo "==> Guia rápido (referência) para instalar Docker + Compose no Linux"
+	@echo "- Leia README > Docker (opcional) > Instalação rápida do Docker no Linux"
+	@echo "- Links oficiais: https://docs.docker.com/engine/install/ e https://docs.docker.com/compose/install/linux/"
+	@echo "- Após instalar, valide com: 'docker --version' e 'docker compose version'"
+	@echo "- Então rode: 'make docker-demo'"
 
 docker-migrate:
 	$(DC) exec $(SVC) python manage.py migrate
