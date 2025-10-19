@@ -56,6 +56,9 @@ make admin ADMIN_USER=admin ADMIN_EMAIL=admin@example.com ADMIN_PASSWORD=admin12
 
 # Demo completa (setup + migrate + seeds + run)
 make demo COUNT=10 IMAGES=generate ADP_COUNT=15 MODE=mix CREATE_USERS=5 HOST=0.0.0.0 PORT=8000
+
+# Demo + criação de admin num comando
+make demo-admin ADMIN_USER=admin ADMIN_EMAIL=admin@example.com ADMIN_PASSWORD=admin123 COUNT=10 IMAGES=generate ADP_COUNT=15 MODE=mix CREATE_USERS=5 HOST=0.0.0.0 PORT=8000
 ```
 
 Acesse:
