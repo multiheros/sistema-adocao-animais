@@ -319,6 +319,10 @@ make docker-exec CMD=bash
 
 # Derrubar containers
 make docker-down
+
+# Testes e pipeline dentro do container
+make docker-test       # testes + coverage (gera htmlcov/ e coverage.xml no container)
+make docker-ci-local   # checks + lint + docker-test
 ```
 
 ### Demo completa em Docker (um comando)

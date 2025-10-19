@@ -25,7 +25,7 @@ ADMIN_PASSWORD ?= admin123
 SVC ?= web
 CMD ?= sh
 
-.PHONY: help setup check migrate superuser run test cov lint clean seed-animals seed-adoptions backfill-created-by shell demo admin demo-admin reset quick-demo ci-local docker-build docker-up docker-down docker-logs docker-exec docker-migrate docker-admin docker-seed docker-demo docker-check docker-install
+.PHONY: help setup check migrate superuser run test cov lint clean seed-animals seed-adoptions backfill-created-by shell demo admin demo-admin reset quick-demo ci-local docker-build docker-up docker-down docker-logs docker-exec docker-migrate docker-admin docker-seed docker-demo docker-check docker-install docker-test docker-ci-local
 
 help:
 	@echo "Targets disponíveis:"
@@ -59,6 +59,8 @@ help:
 	@echo "  docker-demo           - Build + up + migrate + admin + seeds (fluxo completo em Docker)"
 	@echo "  docker-check          - Verifica se Docker/Compose estão disponíveis e como instalar"
 	@echo "  docker-install        - Mostra guia de instalação do Docker/Compose no Linux (referência)"
+	@echo "  docker-test           - Roda testes com coverage dentro do container (HTML e XML)"
+	@echo "  docker-ci-local       - Checks, lint e docker-test (pipeline completa no container)"
 
 setup:
 	$(PY) -m pip install --upgrade pip
@@ -202,3 +204,16 @@ docker-demo:
 	@echo "==> Rodando seeds no container"
 	$(MAKE) docker-seed
 	@echo "==> Pronto! Acesse: http://localhost:8000 (Admin: /admin)"
+
+docker-test:
+	@echo "==> Tests with coverage (HTML + XML) no container"
+	$(DC) exec $(SVC) sh -lc "python -m pip show coverage >/dev/null 2>&1 || python -m pip install coverage; python -m coverage run manage.py test --verbosity 2; python -m coverage report -m; python -m coverage html; python -m coverage xml"
+	@echo "Relatórios (no container): .coverage, coverage.xml e htmlcov/index.html"
+
+docker-ci-local:
+	@echo "==> Django system checks (container)"
+	$(DC) exec $(SVC) python manage.py check
+	@echo "==> Lint (flake8) no container"
+	$(DC) exec $(SVC) sh -lc "python -m pip show flake8 >/dev/null 2>&1 || python -m pip install flake8; python -m flake8 . --max-line-length=100 --extend-exclude .venv,**/migrations/** || true"
+	@echo "==> Tests + coverage no container"
+	$(MAKE) docker-test
