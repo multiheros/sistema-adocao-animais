@@ -20,7 +20,7 @@ ADMIN_USER ?= admin
 ADMIN_EMAIL ?= admin@example.com
 ADMIN_PASSWORD ?= admin123
 
-.PHONY: help setup check migrate superuser run test cov lint clean seed-animals seed-adoptions backfill-created-by shell demo admin demo-admin
+.PHONY: help setup check migrate superuser run test cov lint clean seed-animals seed-adoptions backfill-created-by shell demo admin demo-admin reset
 
 help:
 	@echo "Targets disponíveis:"
@@ -40,6 +40,7 @@ help:
 	@echo "  demo                  - Setup completo + seeds + sobe o servidor"
 	@echo "  admin                 - Cria/atualiza superusuário não interativo (ADMIN_USER=$(ADMIN_USER))"
 	@echo "  demo-admin            - Cria admin e executa 'demo' (valores padrão personalizáveis)"
+	@echo "  reset                 - APAGA db.sqlite3 e media/ e roda demo-admin do zero (cuidado!)"
 
 setup:
 	$(PY) -m pip install --upgrade pip
@@ -108,3 +109,10 @@ admin:
 demo-admin:
 	$(MAKE) admin
 	$(MAKE) demo
+
+reset:
+	@echo "[ATENÇÃO] Isso vai apagar db.sqlite3 e a pasta media/ e recriar tudo do zero."
+	@read -p "Confirmar? (y/N) " ans; if [ "$$ans" != "y" ] && [ "$$ans" != "Y" ]; then echo "Cancelado."; exit 1; fi
+	rm -f db.sqlite3
+	rm -rf media
+	$(MAKE) demo-admin
