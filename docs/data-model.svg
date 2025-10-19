@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-label="Diagrama do modelo de dados">
+  <defs>
+    <style>
+      .box { fill: #ffffff; stroke: #ced4da; stroke-width: 1.5; rx: 8; }
+      .title { font: 600 16px Inter, Arial, sans-serif; fill: #212529; }
+      .field { font: 13px Inter, Arial, sans-serif; fill: #343a40; }
+      .note { font: 12px Inter, Arial, sans-serif; fill: #495057; }
+      .label { font: 12px Inter, Arial, sans-serif; fill: #212529; }
+      .muted { fill: #6c757d; font: 12px Inter, Arial, sans-serif; }
+      .line { stroke: #adb5bd; stroke-width: 1.5; }
+      .card { fill: #f8f9fa; stroke: #dee2e6; rx: 6; }
+    </style>
+  </defs>
+
+  <!-- Header -->
+  <text x="40" y="40" class="title" font-size="20">Sistema de Adoção de Animais — Modelo de Dados</text>
+  <text x="40" y="58" class="muted">Atualizado: campos atuais com regras e relacionamentos</text>
+
+  <!-- Box: User -->
+  <g transform="translate(40,90)">
+    <rect class="box" width="320" height="220"/>
+    <text x="16" y="26" class="title">User</text>
+    <line x1="16" y1="36" x2="304" y2="36" class="line"/>
+    <g class="field">
+      <text x="16" y="60">id: Integer</text>
+      <text x="16" y="80">username: String</text>
+      <text x="16" y="100">email: String</text>
+      <text x="16" y="120">password: String</text>
+      <text x="16" y="140">date_joined: DateTime</text>
+    </g>
+  </g>
+
+  <!-- Box: Animal -->
+  <g transform="translate(420,90)">
+    <rect class="box" width="360" height="300"/>
+    <text x="16" y="26" class="title">Animal</text>
+    <line x1="16" y1="36" x2="344" y2="36" class="line"/>
+    <g class="field">
+      <text x="16" y="60">id: Integer</text>
+      <text x="16" y="80">name: String</text>
+      <text x="16" y="100">species: Enum [dog|cat|bird|reptile|other]</text>
+      <text x="16" y="120">breed: String</text>
+      <text x="16" y="140">age: Integer</text>
+      <text x="16" y="160">description: Text</text>
+      <text x="16" y="180">image: Image (nullable)</text>
+      <text x="16" y="200">adopted: Boolean</text>
+      <text x="16" y="220">created_by → User (nullable)</text>
+    </g>
+  </g>
+
+  <!-- Box: Adoption -->
+  <g transform="translate(260,430)">
+    <rect class="box" width="460" height="220"/>
+    <text x="16" y="26" class="title">Adoption</text>
+    <line x1="16" y1="36" x2="444" y2="36" class="line"/>
+    <g class="field">
+      <text x="16" y="60">id: Integer</text>
+      <text x="16" y="80">adoption_date: Date</text>
+      <text x="16" y="100">adopter → User</text>
+      <text x="16" y="120">animal → Animal</text>
+      <text x="16" y="140">status: Enum [pending|approved|rejected]</text>
+    </g>
+  </g>
+
+  <!-- Note: unique rule -->
+  <g transform="translate(740,430)">
+    <rect class="card" width="380" height="90"/>
+    <text x="12" y="22" class="title" font-size="14">Regras</text>
+    <g class="note">
+      <text x="12" y="42">• Apenas 1 adoção "approved" por Animal (UniqueConstraint + clean)</text>
+      <text x="12" y="62">• Ao aprovar, Animal.adopted = True; ao rejeitar, permanece disponível</text>
+    </g>
+  </g>
+
+  <!-- Relationships -->
+  <!-- User (right) to Adoption (top-left) -->
+  <line x1="360" y1="200" x2="260" y2="470" class="line"/>
+  <text x="280" y="330" class="label">1</text>
+  <text x="300" y="360" class="muted">adopts</text>
+  <text x="250" y="485" class="label">*</text>
+
+  <!-- Animal (right) to Adoption (top-right) -->
+  <line x1="780" y1="230" x2="720" y2="470" class="line"/>
+  <text x="760" y="330" class="label">1</text>
+  <text x="720" y="360" class="muted">is adopted in</text>
+  <text x="705" y="485" class="label">*</text>
+
+  <!-- User (bottom) to Animal (left) created_by -->
+  <line x1="200" y1="310" x2="420" y2="210" class="line"/>
+  <text x="250" y="245" class="muted">created_by</text>
+  <text x="195" y="300" class="label">1</text>
+  <text x="410" y="210" class="label">0..*</text>
+
+</svg>

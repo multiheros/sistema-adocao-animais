@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <h1 class="h3 mb-3">{% if animal %}Editar Animal{% else %}Adicionar Animal{% endif %}</h1>
+        <form method="post" enctype="multipart/form-data" class="card card-body shadow-sm">
+        {% csrf_token %}
+            <div class="row g-3">
+                {{ form.as_p }}
+                <div class="col-12">
+                    <label class="form-label">Pré-visualização da imagem</label>
+                    <div id="image-preview"></div>
+                </div>
+            </div>
+        <div class="d-flex gap-2 mt-3">
+            <button type="submit" class="btn-cta btn-cta--primary">
+                {% if animal %}<i class="bi bi-save"></i> Salvar Alterações{% else %}<i class="bi bi-plus-lg"></i> Adicionar Animal{% endif %}
+            </button>
+            <a href="{% url 'animal_list' %}" class="btn-cta btn-cta--secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
+        </div>
+    </form>
+{% endblock %}

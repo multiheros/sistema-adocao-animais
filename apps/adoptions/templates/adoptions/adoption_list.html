@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h1 class="h3 mb-0">Adoções</h1>
+    <a href="{% url 'adoption_create' %}" class="btn-cta btn-cta--primary"><i class="bi bi-plus-lg"></i> Nova Adoção</a>
+    </div>
+
+            <form method="get" class="row g-2 align-items-end mb-3">
+            <div class="col-sm-6 col-md-4">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select text-uppercase">
+                    <option value="">Todos</option>
+                    <option value="pending" {% if filter_status == 'pending' %}selected{% endif %}>Pendente</option>
+                    <option value="approved" {% if filter_status == 'approved' %}selected{% endif %}>Aprovada</option>
+                    <option value="rejected" {% if filter_status == 'rejected' %}selected{% endif %}>Rejeitada</option>
+                </select>
+            </div>
+                <div class="col-sm-6 col-md-4">
+                    <label class="form-label">Buscar</label>
+                    <input type="text" class="form-control" name="q" value="{{ filter_q }}" placeholder="Nome do animal">
+                </div>
+                    <div class="col-sm-6 col-md-4">
+                        <label class="form-label">Adotante</label>
+                        <input type="text" class="form-control" name="adopter" value="{{ filter_adopter }}" placeholder="Usuário adotante">
+                    </div>
+                <div class="col-12 col-md-4 d-flex gap-2">
+                <button class="btn-cta btn-cta--primary" type="submit"><i class="bi bi-funnel"></i> Filtrar</button>
+                <a class="btn-cta btn-cta--secondary" href="{% url 'adoption_list' %}"><i class="bi bi-x-circle"></i> Limpar</a>
+            </div>
+        </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Animal</th>
+                    <th scope="col">Adotante</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Data</th>
+                    <th scope="col" class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for adoption in adoptions %}
+                    <tr class="{% if adoption.status == 'approved' %}table-success{% elif adoption.status == 'rejected' %}table-danger{% elif adoption.status == 'pending' %}table-warning{% endif %}" title="Status: {{ adoption.get_status_display }}">
+                        <td>{{ adoption.id }}</td>
+                        <td class="fw-semibold">{{ adoption.animal.name }}</td>
+                        <td>{{ adoption.adopter.username }}</td>
+                        <td>
+                            <span class="badge rounded-pill{% if adoption.status == 'approved' %} bg-success{% elif adoption.status == 'rejected' %} bg-danger{% else %} bg-warning text-dark{% endif %}">{{ adoption.get_status_display }}</span>
+                        </td>
+                        <td>{{ adoption.adoption_date|date:'d/m/Y' }}</td>
+                        <td class="text-end">
+                            <a href="{% url 'adoption_detail' adoption.id %}" class="btn btn-icon btn-icon--view" title="Ver detalhes" aria-label="Ver detalhes"><i class="bi bi-eye"></i></a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">Nenhuma adoção encontrada.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+            {% if page_obj %}
+                <nav aria-label="Paginação">
+                    <ul class="pagination justify-content-center mt-3">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&status={{ filter_status }}&q={{ filter_q }}&adopter={{ filter_adopter }}" tabindex="-1">Anterior</a></li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+                        {% endif %}
+                        <li class="page-item disabled"><span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span></li>
+                        {% if page_obj.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&status={{ filter_status }}&q={{ filter_q }}&adopter={{ filter_adopter }}">Próxima</a></li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">Próxima</span></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+{% endblock %}

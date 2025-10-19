@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="row g-4">
+        <div class="col-md-5">
+            <div class="card shadow-sm">
+                {% if animal.image %}
+                    <img src="{{ animal.image.url }}" class="card-img-top" alt="{{ animal.name }}">
+                {% else %}
+                    <div class="d-flex align-items-center justify-content-center bg-light" style="height: 260px;">
+                        <i class="bi bi-image text-muted" style="font-size: 4rem;"></i>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h1 class="h3 mb-0">{{ animal.name }}</h1>
+                {% if animal.adopted %}
+                    <span class="badge bg-success"><i class="bi bi-check2-circle"></i> Adotado</span>
+                {% else %}
+                    <span class="badge bg-warning text-dark"><i class="bi bi-hourglass"></i> Disponível</span>
+                {% endif %}
+            </div>
+
+            <ul class="list-group list-group-flush mb-3">
+                <li class="list-group-item"><strong>Espécie:</strong> <span class="text-uppercase">{{ animal.get_species_display }}</span></li>
+                <li class="list-group-item"><strong>Raça:</strong> {{ animal.breed|default:'—' }}</li>
+                <li class="list-group-item"><strong>Idade:</strong> {{ animal.age }} anos</li>
+            </ul>
+
+            <div class="card card-body mb-3">
+                <strong class="mb-2">Descrição</strong>
+                <p class="mb-0">{{ animal.description|linebreaks }}</p>
+            </div>
+
+            <div class="d-flex gap-2">
+                <a href="{% url 'animal_list' %}" class="btn-cta btn-cta--secondary" title="Voltar" aria-label="Voltar"><i class="bi bi-arrow-left"></i> Voltar</a>
+                {% if not animal.adopted %}
+                    <a href="{% url 'adoption_create' %}?animal={{ animal.id }}" class="btn-cta btn-cta--success" title="Nova Adoção" aria-label="Nova Adoção"><i class="bi bi-heart"></i> Nova Adoção</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

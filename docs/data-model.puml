@@ -1,0 +1,30 @@
+@startuml
+
+entity "User" {
+    +id: Integer
+    +username: String
+    +email: String
+    +password: String
+}
+
+entity "Animal" {
+    +id: Integer
+    +name: String
+    +species: Enum(dog, cat, bird, reptile, other)
+    +breed: String
+    +age: Integer
+    +description: String
+    +adopted: Boolean
+}
+
+entity "Adoption" {
+    +id: Integer
+    +adoption_date: Date
+    +adopter_id: Integer
+    +animal_id: Integer
+}
+
+User ||--o{ Adoption : adopts
+Animal ||--o{ Adoption : is_adopted_by
+
+@enduml

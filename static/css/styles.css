@@ -1,0 +1,90 @@
+/* Reset básico e cor de fundo do corpo */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+/* Removidos estilos globais que conflitavam com Bootstrap: nav, nav a, .container, .card, header, footer e .btn */
+
+/* --- High-contrast icon buttons --- */
+.btn-icon {
+    --size: 38px;
+    --shadow: 0 1px 2px rgba(0,0,0,.05), 0 2px 8px rgba(0,0,0,.04);
+    width: var(--size);
+    height: var(--size);
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    box-shadow: var(--shadow);
+    transition: transform .08s ease, box-shadow .2s ease, background-color .15s ease, color .15s ease, border-color .15s ease;
+    line-height: 1;
+}
+
+.btn-icon i { font-size: 1rem; }
+
+/* Remove underline from icon buttons (anchors) */
+.btn-icon,
+.btn-icon:hover,
+.btn-icon:focus,
+.btn-icon:active { text-decoration: none !important; }
+
+.btn-icon:focus-visible { outline: 3px solid rgba(13,110,253,.45); outline-offset: 2px; }
+.btn-icon:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,.08), 0 6px 16px rgba(0,0,0,.06); }
+.btn-icon:active { transform: translateY(0); box-shadow: var(--shadow); }
+
+/* View (info) */
+.btn-icon--view { background: #e3f2fd; color: #0d6efd; border-color: rgba(13,110,253,.5); }
+.btn-icon--view:hover { background: #0d6efd; color: #fff; border-color: #0d6efd; }
+
+/* Edit (warning) */
+.btn-icon--edit { background: #fff3cd; color: #d39e00; border-color: rgba(255,193,7,.6); }
+.btn-icon--edit:hover { background: #ffc107; color: #212529; border-color: #ffc107; }
+
+/* Delete (danger) */
+.btn-icon--delete { background: #fde2e5; color: #dc3545; border-color: rgba(220,53,69,.6); }
+.btn-icon--delete:hover { background: #dc3545; color: #fff; border-color: #dc3545; }
+
+/* Subtle spacing between icon buttons */
+.btn-icon + .btn-icon { margin-left: .35rem; }
+
+/* Improve badge contrast for species labels */
+.badge.text-uppercase { letter-spacing: .04em; font-weight: 600; }
+
+/* --- Modern CTA buttons --- */
+.btn-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    border-radius: 999px;
+    padding: .55rem 1rem;
+    font-weight: 600;
+    letter-spacing: .02em;
+    border: 2px solid transparent;
+    transition: transform .08s ease, box-shadow .2s ease, background-color .15s ease, color .15s ease, border-color .15s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,.05), 0 4px 16px rgba(0,0,0,.06);
+}
+.btn-cta,
+.btn-cta:hover,
+.btn-cta:focus,
+.btn-cta:active { text-decoration: none !important; }
+.btn-cta:focus-visible { outline: 3px solid rgba(13,110,253,.35); outline-offset: 2px; }
+.btn-cta:hover { transform: translateY(-1px); box-shadow: 0 2px 6px rgba(0,0,0,.08), 0 10px 20px rgba(0,0,0,.08); }
+.btn-cta:active { transform: translateY(0); }
+.btn-cta i { font-size: 1rem; }
+
+.btn-cta--primary { background: #0d6efd; color: #fff; border-color: #0d6efd; }
+.btn-cta--primary:hover { background: #0b5ed7; border-color: #0b5ed7; }
+
+.btn-cta--success { background: #198754; color: #fff; border-color: #198754; }
+.btn-cta--success:hover { background: #157347; border-color: #157347; }
+
+.btn-cta--secondary { background: #eef1f4; color: #212529; border-color: #e2e6ea; }
+.btn-cta--secondary:hover { background: #e2e6ea; border-color: #dae0e5; }
+
+.btn-cta--danger { background: #dc3545; color: #fff; border-color: #dc3545; }
+.btn-cta--danger:hover { background: #bb2d3b; border-color: #bb2d3b; }

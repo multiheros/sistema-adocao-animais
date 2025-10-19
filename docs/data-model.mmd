@@ -1,0 +1,28 @@
+classDiagram
+    class User {
+        +int id
+        +string username
+        +string email
+        +string password
+        +DateTime date_joined
+    }
+
+    class Animal {
+        +int id
+        +string name
+        +enum species (dog|cat|bird|reptile|other)
+        +string breed
+        +int age
+        +string description
+        +boolean adopted
+    }
+
+    class Adoption {
+        +int id
+        +DateTime adoption_date
+        +int adopter_id
+        +int animal_id
+    }
+
+    User "1" -- "0..*" Adoption : adopts
+    Animal "1" -- "0..*" Adoption : is adopted in

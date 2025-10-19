@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="card border-danger shadow-sm">
+        <div class="card-header bg-danger text-white">
+            <h1 class="h5 mb-0"><i class="bi bi-exclamation-triangle"></i> Confirmar Exclusão</h1>
+        </div>
+        <div class="card-body">
+            <p class="mb-3">Você tem certeza de que deseja excluir a adoção "{{ adoption }}"?</p>
+            <form method="post" class="d-flex gap-2">
+                {% csrf_token %}
+                <button type="submit" class="btn-cta btn-cta--danger"><i class="bi bi-trash"></i> Confirmar</button>
+                <a href="{% url 'adoption_list' %}" class="btn-cta btn-cta--secondary"><i class="bi bi-arrow-left"></i> Cancelar</a>
+            </form>
+        </div>
+    </div>
+{% endblock %}

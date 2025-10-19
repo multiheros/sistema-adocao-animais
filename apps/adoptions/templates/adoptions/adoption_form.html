@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <h1 class="h3 mb-3">{% if adoption %}Editar Adoção{% else %}Nova Adoção{% endif %}</h1>
+    <form method="post" class="card card-body shadow-sm">
+        {% csrf_token %}
+        <div class="row g-3">
+            <div class="col-12 col-md-6 mb-3">
+                {{ form.animal.label_tag }}
+                {{ form.animal }}
+            </div>
+            {% if request.user.is_staff or request.user.is_superuser %}
+                <div class="col-12 col-md-6 mb-3">
+                    {{ form.adopter.label_tag }}
+                    {{ form.adopter }}
+                </div>
+                <div class="col-12 col-md-6 mb-3">
+                    {{ form.status.label_tag }}
+                    {{ form.status }}
+                </div>
+            {% else %}
+                <input type="hidden" name="adopter" value="{{ request.user.id }}" />
+                <input type="hidden" name="status" value="pending" />
+            {% endif %}
+        </div>
+        <div class="d-flex gap-2 mt-3">
+            <button type="submit" class="btn-cta btn-cta--primary">{% if adoption %}<i class="bi bi-save"></i> Atualizar{% else %}<i class="bi bi-plus-lg"></i> Criar{% endif %}</button>
+            <a href="{% url 'adoption_list' %}" class="btn-cta btn-cta--secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
+        </div>
+    </form>
+{% endblock %}
