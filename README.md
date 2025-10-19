@@ -387,3 +387,24 @@ Projeto acadêmico para fins educacionais.
 	- `make docker-down` e depois `docker compose ls` para verificar stacks. Use `docker ps -a` e `docker rm -f <id>` para limpar.
 - Volumes travados
 	- Para limpar volumes locais criados pelo compose (irá apagar uploads): `docker volume ls` e `docker volume rm <volume>` correspondente ao volume media.
+
+## Como contribuir
+- Fluxo de branches
+	- main: branch estável.
+	- feature/nome-curto: para novas features.
+	- fix/nome-curto: para correções.
+	- docs/nome-curto: para documentação.
+- Commits
+	- Mensagens claras no imperativo curto (ex.: "Add seed for X", "Fix adoption status badge").
+	- Prefixos opcionais: Feat:, Fix:, Docs:, DX:, CI:, Refactor:, Chore:.
+- Antes de abrir PR
+	- Rode localmente: `make ci-local` (checks + lint + testes + coverage HTML/XML)
+	- Atualize README/docs se a mudança for visível ao usuário.
+	- Inclua/atualize testes quando alterar regras de negócio/validações.
+	- Se houver migrations, valide `makemigrations` gerado e rode `migrate`.
+- Checklist do PR
+	- [ ] Descrevi claramente o objetivo e o comportamento esperado
+	- [ ] Rodei `make ci-local` sem erros
+	- [ ] Adicionei/atualizei testes relevantes
+	- [ ] Atualizei a documentação (README, comentários, help de comandos)
+	- [ ] Não inclui segredos ou dados sensíveis
