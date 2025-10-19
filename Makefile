@@ -20,7 +20,7 @@ ADMIN_USER ?= admin
 ADMIN_EMAIL ?= admin@example.com
 ADMIN_PASSWORD ?= admin123
 
-.PHONY: help setup check migrate superuser run test cov lint clean seed-animals seed-adoptions backfill-created-by shell demo admin demo-admin reset quick-demo
+.PHONY: help setup check migrate superuser run test cov lint clean seed-animals seed-adoptions backfill-created-by shell demo admin demo-admin reset quick-demo ci-local
 
 help:
 	@echo "Targets disponíveis:"
@@ -42,6 +42,7 @@ help:
 	@echo "  demo-admin            - Cria admin e executa 'demo' (valores padrão personalizáveis)"
 	@echo "  reset                 - APAGA db.sqlite3 e media/ e roda demo-admin do zero (cuidado!)"
 	@echo "  quick-demo            - Alias sem prompt (admin + demo) usando valores padrão"
+    @echo "  ci-local              - Simula pipeline CI localmente (checks, lint, tests+coverage XML/HTML)"
 
 setup:
 	$(PY) -m pip install --upgrade pip
@@ -120,3 +121,13 @@ reset:
 
 quick-demo:
 	$(MAKE) demo-admin
+
+ci-local:
+	@echo "==> Django system checks"
+	$(MAKE) check
+	@echo "==> Lint (flake8)"
+	$(MAKE) lint
+	@echo "==> Tests with coverage (HTML + XML)"
+	$(MAKE) cov
+	coverage xml
+	@echo "Relatórios gerados: .coverage, coverage.xml e htmlcov/index.html"

@@ -65,6 +65,9 @@ make reset ADMIN_USER=admin ADMIN_EMAIL=admin@example.com ADMIN_PASSWORD=admin12
 
 # Quick demo (atalho sem prompts; usa valores configurados no Makefile/ambiente)
 make quick-demo
+
+# Simular pipeline de CI localmente (checks, lint, tests + coverage XML/HTML)
+make ci-local
 ```
 
 Acesse:
@@ -251,6 +254,33 @@ Como renderizar localmente (opcional):
 	coverage html  # gera htmlcov/index.html
 	```
 - Na CI, a cobertura é gerada automaticamente e o relatório HTML é publicado como artifact de build. Se você configurar um token `CODECOV_TOKEN` nos Secrets do repositório, os resultados também serão enviados ao Codecov.
+
+## Docker (opcional)
+Você pode rodar a aplicação em containers para uma demo rápida.
+
+Com Docker e docker-compose instalados:
+
+```bash
+# Build da imagem
+docker compose build
+
+# Subir o serviço (porta 8000)
+docker compose up
+
+# Em outro terminal, criar um superusuário (interativo dentro do container)
+docker compose exec web python manage.py createsuperuser
+
+# Popular dados de exemplo (opcional)
+docker compose exec web python manage.py seed_animals --count 10 --with-images generate --force
+docker compose exec web python manage.py seed_adoptions --count 15 --mode mix --create-users 5 --force
+
+# Encerrar e remover containers
+docker compose down
+```
+
+URLs:
+- App: http://localhost:8000/
+- Admin: http://localhost:8000/admin/
 
 ## Licença
 Projeto acadêmico para fins educacionais.
